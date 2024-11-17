@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Task, Status } from "@/types/Task.ts";
+import { Task, Status, Priority } from "@/types/Task.ts";
 
 export const useTasksStore = defineStore("tasks", {
   state: () => {
@@ -26,19 +26,28 @@ export const useTasksStore = defineStore("tasks", {
         updated_at: created_at,
       });
     },
-    add(task: Omit<Task, "status">, status: Status, index: number) {
+    add(task: Partial<Task>, status: Status, index?: number) {
       const newTask: Task = {
         ...task,
+        created_at: task.created_at ?? new Date(),
+        updated_at: task.updated_at ?? new Date(),
         status,
+        id: task.id ?? 0,
+        isEpic: task.isEpic ?? false,
+        priority: task.priority ?? Priority.Normal,
+        title: task.title ?? "",
       };
 
       const tasksOfStatus: Task[] = this.tasks.filter(
         (t) => t.status === status
       );
-      tasksOfStatus.splice(index, 0, newTask);
+      if (index) {
+        tasksOfStatus.splice(index, 0, newTask);
+      } else {
+        tasksOfStatus.push(newTask);
+      }
       // remove all tasks with status with the new updated tasksOfStatus
       this.updateTasks(status, tasksOfStatus);
-      // this.tasks.push(newTask);
     },
     update(task: Task) {},
     updateTasks(status: Status, updatedTasks: Task[]) {

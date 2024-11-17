@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-4">
+  <div class="max-w-64 bg-white rounded-lg shadow p-4 m-4">
     <div class="flex items-center justify-between border-b pb-3">
       <h2 class="text-lg font-semibold text-gray-800 flex items-center">
         <i class="fas fa-sun text-yellow-400 mr-2"></i>{{ props.status }}
@@ -7,10 +7,21 @@
       </h2>
       <i class="fas fa-ellipsis-h text-gray-400"></i>
     </div>
-
-    <template v-for="task in tasks">
-      <TaskCard :task="task" />
-    </template>
+    <VueDraggable
+      class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto min-h-32 min-w-32"
+      v-model="statusTasks"
+      animation="150"
+      ghostClass="ghost"
+      group="tasks"
+      @add="onAdd"
+      @update="onUpdate"
+      @remove="onRemove"
+      :ref="status"
+    >
+      <template v-for="task in statusTasks">
+        <TaskCard :task="task" />
+      </template>
+    </VueDraggable>
 
     <div class="mt-4 flex items-center text-gray-500 text-sm cursor-pointer">
       <i class="fas fa-plus text-gray-400 mr-2"></i>Add Task
@@ -19,14 +30,34 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-
+//@ts-ignore
+import { VueDraggable, DraggableEvent } from "vue-draggable-plus";
+import TaskCard from "@/components/TaskCard.vue";
+import { useTasksStore } from "@/stores/tasks";
+import { Status } from "@/types/Task";
+import { computed } from "vue";
 const props = defineProps<{
   status: Status;
 }>();
 
-import TaskCard from "@/components/TaskCard.vue";
-import { useTasksStore } from "@/stores/tasks";
 const tasksStore = useTasksStore();
-const { tasks } = storeToRefs(tasksStore);
+
+const statusTasks = computed({
+  get() {
+    return tasksStore.tasks.filter((t) => t.status === props.status);
+  },
+  set(val) {
+    tasksStore.updateTasks(props.status, val);
+  },
+});
+
+function onUpdate() {
+  console.log("update");
+}
+function onAdd(event: DraggableEvent) {
+  tasksStore.add(event.data, props.status, event.newIndex);
+}
+function onRemove() {
+  console.log("remove");
+}
 </script>

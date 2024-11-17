@@ -1,65 +1,64 @@
-<template v-if="task">
+<template v-if="props.task">
   <div class="mt-4 border rounded-lg p-4 bg-gray-50">
     <div class="flex items-center mb-2">
       <span
-        class="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-1 rounded-md mr-2"
+        :class="getStatusClass(props.task.status)"
+        class="text-xs font-medium px-2 py-1 rounded-md mr-2 bg-gray-100"
       >
-        {{ props.task.status }}
+        {{ getStatus(props.task.status) }}
       </span>
       <span
-        class="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-md mr-2"
+        class="text-xs font-medium px-2 py-1 rounded-md mr-2"
+        :class="getPriorityClass(props.task.priority)"
       >
         {{ props.task.priority }}</span
       >
-      <!-- <span
-        class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-md"
-        >Website</span
-      > -->
     </div>
     <h3 class="text-sm font-medium text-gray-800 mb-1">
       {{ props.task.title }}
     </h3>
-    <!-- <p class="text-xs text-gray-500 mb-3">E-commerce Redesign</p> -->
-    <!-- <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-1">
-        <div
-          class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-semibold"
-        >
-          J
-        </div>
-        <div
-          class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-semibold"
-        >
-          S
-        </div>
-        <div
-          class="w-6 h-6 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center text-xs font-medium"
-        >
-          +2
-        </div>
-      </div>
-      <div class="flex items-center text-gray-500 text-xs space-x-4">
-        <div class="flex items-center space-x-1">
-          <i class="far fa-comment-alt"></i>
-          <span>5</span>
-        </div>
-        <div class="flex items-center space-x-1">
-          <i class="far fa-calendar-alt"></i>
-          <span>Tomorrow</span>
-        </div>
-        <div class="flex items-center space-x-1">
-          <i class="far fa-clock"></i>
-          <span>20%</span>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { Task } from "@/types/Task.ts";
+//@ts-ignore
+import { Status, Task, Priority } from "@/types/Task.ts";
 
 const props = defineProps<{
   task: Task;
 }>();
+
+const getPriorityClass = (priority: Priority) => {
+  const priorityClasses = {
+    [Priority.Urgent]: "text-blue-600 bg-blue-100",
+    [Priority.High]: "text-orange-600 bg-orange-100",
+    [Priority.Normal]: "text-yellow-600 bg-yellow-100",
+    [Priority.Low]: "text-blue-600 bg-blue-100",
+  };
+
+  return priorityClasses[priority] || "";
+};
+
+const getStatusClass = (status: Status) => {
+  const statusClasses = {
+    [Status.Todo]: "text-grey-500 ",
+    [Status.Ongoing]: "text-orange-500 ",
+    [Status.Done]: "text-green-500 ",
+  };
+
+  return statusClasses[status] || "";
+};
+
+const getStatus = (status: Status) => {
+  switch (status) {
+    case Status.Todo:
+      return "To do";
+    case Status.Ongoing:
+      return "In Progress";
+    case Status.Done:
+      return "Completed";
+    default:
+      return "Unknown status";
+  }
+};
 </script>

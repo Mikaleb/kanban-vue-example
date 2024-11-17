@@ -23,15 +23,14 @@
       </template>
     </VueDraggable>
 
-    <div class="mt-4 flex items-center text-gray-500 text-sm cursor-pointer">
-      <i class="fas fa-plus text-gray-400 mr-2"></i>Add Task
-    </div>
+    <AddTaskCard :status="status"></AddTaskCard>
   </div>
 </template>
 
 <script setup lang="ts">
 //@ts-ignore
 import { VueDraggable, DraggableEvent } from "vue-draggable-plus";
+import AddTaskCard from "@/components/AddTaskCard.vue";
 import TaskCard from "@/components/TaskCard.vue";
 import { useTasksStore } from "@/stores/tasks";
 import { Status } from "@/types/Task";

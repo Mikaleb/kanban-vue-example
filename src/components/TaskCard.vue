@@ -23,6 +23,7 @@
 <script setup lang="ts">
 //@ts-ignore
 import { Status, Task, Priority } from "@/types/Task.ts";
+import { getStatus } from "@/utils/status";
 
 const props = defineProps<{
   task: Task;
@@ -47,18 +48,5 @@ const getStatusClass = (status: Status) => {
   };
 
   return statusClasses[status] || "";
-};
-
-const getStatus = (status: Status) => {
-  switch (status) {
-    case Status.Todo:
-      return "To do";
-    case Status.Ongoing:
-      return "In Progress";
-    case Status.Done:
-      return "Completed";
-    default:
-      return "Unknown status";
-  }
 };
 </script>

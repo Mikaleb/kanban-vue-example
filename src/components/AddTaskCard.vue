@@ -8,7 +8,6 @@
   </div>
 
   <div class="mt-4 border rounded-lg p-4 bg-gray-50" v-if="showForm">
-    {{ newTask }}
     <div class="flex items-center mb-2">
       <select
         v-model="newTask.priority"
